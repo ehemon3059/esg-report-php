@@ -8,16 +8,6 @@
 8. 📊 Phase 6: EU Taxonomy & Assurance
 9. 📄 Final ESG Report Generator
 
-/esg-reporting/
-├── config/
-│   └── database.php          (DB connection)
-├── login.php                  (Login form)
-├── process_login.php          (Handle login POST)
-├── logout.php                 (Destroy session)
-├── dashboard.php              (After login - your dashboard-2.html)
-└── includes/
-    └── auth.php               (Session check function)                       
-
 
 ## **📂 FINAL FILE STRUCTURE**
 ```
@@ -34,10 +24,10 @@
 │   ├── login.php
 │   ├── dashboard.php (dashboard-2.html)
 │   ├── sites.php
-│   ├── phase3.php (phase-3.html)
-│   ├── phase4.php (phase-4.html)
-│   ├── phase5.php (phase-5.html)
-│   ├── phase6.php (phase-6.html)
+│   ├── phase3.php 
+│   ├── phase4.php
+│   ├── phase5.php
+│   ├── phase6.php
 │   └── generate_report.php
 │
 ├── actions/
