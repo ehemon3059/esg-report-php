@@ -1,0 +1,9 @@
+RewriteEngine On
+RewriteBase /esg-report/
+
+# Do not redirect real files or directories (like /css/ or /js/)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Send all other paths to index.php
+RewriteRule ^(.*)$ index.php [L,QSA]

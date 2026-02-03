@@ -1,157 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Pure JS SPA</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <script src="https://cdn.tailwindcss.com"></script>
-
+    <meta charset="UTF-8" />
+    <title>ESG Reporting Platform</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-
-
-        /* ===============================
-        Global Transitions
-        ================================ */
-        * {
-        transition-property: color, background-color, border-color, text-decoration-color,
-            fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
-        transition-duration: 200ms;
-        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        /* Smooth Global Transitions */
+        * { transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        /* Active Link Styling */
+        .nav-link.active { color: #047857; background-color: #ecfdf5; font-weight: 600; }
+        .nav-link.active .indicator { opacity: 1; transform: translateX(-50%) scale(1); }
+        
+        .indicator { 
+            opacity: 0; position: absolute; bottom: 2px; left: 50%; 
+            transform: translateX(-50%) scale(0); 
+            width: 5px; height: 5px; background-color: #10b981; 
+            border-radius: 50%; transition: all 0.3s ease;
         }
 
-        /* ===============================
-            Accordion
-        ================================ */
-        .accordion-content {
-        transition: max-height 0.3s ease-out;
-        }
-
-        .accordion-item {
-        transition: transform 0.3s ease;
-        }
-
-        .accordion-item:hover {
-        transform: translateY(-2px);
-        }
-
-        /* ===============================
-            Inputs – General
-        ================================ */
-        input,
-        textarea,
-        select {
-        transition: all 0.2s ease;
-        }
-
-        input:focus,
-        textarea:focus,
-        select:focus {
-        box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.1);
-        }
-
-        /* ===============================
-            Checkbox
-        ================================ */
-        input[type="checkbox"] {
-        cursor: pointer;
-        }
-
-        input[type="checkbox"]:checked+label {
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
-        }
-
-        input[type="checkbox"]:checked {
-        background-color: currentColor;
-        border-color: transparent;
-        background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: 100% 100%;
-        }
-
-        /* ===============================
-            Number Input
-        ================================ */
-        input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-        }
-
-        /* ===============================
-            Month & Date Inputs
-        ================================ */
-        input[type="month"]::-webkit-calendar-picker-indicator,
-        input[type="date"]::-webkit-calendar-picker-indicator {
-        background: transparent;
-        cursor: pointer;
-        padding: 0.5rem;
-        position: absolute;
-        inset: 0;
-        }
-
-        input[type="month"]:focus {
-        background-color: #fff;
-        }
-
-        /* ===============================
-            Select Dropdown
-        ================================ */
-        select {
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right 0.75rem center;
-        background-size: 1.5em;
-        padding-right: 2.5rem;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-        }
-
-        /* ===============================
-            Scrollbar (Global & Textarea)
-        ================================ */
-        ::-webkit-scrollbar,
-        textarea::-webkit-scrollbar {
-        width: 6px;
-        }
-
-        ::-webkit-scrollbar-track,
-        textarea::-webkit-scrollbar-track {
-        background: #f1f5f9;
-        border-radius: 3px;
-        }
-
-        ::-webkit-scrollbar-thumb,
-        textarea::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
-        border-radius: 3px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover,
-        textarea::-webkit-scrollbar-thumb:hover {
-        background: #94a3b8;
-        }
-
-        /* ===============================
-            Animations
-        ================================ */
-        @keyframes shimmer {
-        0% {
-            transform: translateX(-100%);
-        }
-
-        100% {
-            transform: translateX(100%);
-        }
-        }
-
-        .animate-shimmer {
-        animation: shimmer 2s infinite;
-        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
     </style>
-
 </head>
 
 <body class="bg-gray-50 min-h-screen font-sans antialiased">
@@ -160,180 +33,123 @@
         <h1 class="text-3xl font-bold text-center md:text-left">ESG Reporting Platform</h1>
     </header>
 
-    <nav class="bg-white sticky top-0 z-50 backdrop-blur-sm bg-white/90 border-b border-gray-100 shadow-sm">
+    <nav class="bg-white sticky top-0 z-50 border-b border-gray-100 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <!-- Logo/Brand placeholder -->
                 <div class="flex-shrink-0">
-                    <a href="/"
-                        class="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
+                    <a href="/esg-report/" class="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
                         ESG Portal
                     </a>
                 </div>
 
-                <!-- Desktop Navigation -->
                 <ul class="hidden md:flex items-center space-x-1">
+                    <?php 
+                    $navItems = [
+                        'phase-3' => 'Emissions',
+                        'phase-4' => 'Environmental',
+                        'phase-5' => 'Social & Gov',
+                        'phase-6' => 'EU Taxonomy'
+                    ];
+                    foreach ($navItems as $slug => $label): ?>
                     <li>
-                        <a href="/phase-3" data-page="phase-3" class="nav-link relative px-4 py-2.5 rounded-lg text-gray-700 hover:text-emerald-700 transition-all duration-300 
-                                hover:bg-emerald-50 group">
-                            <span class="relative z-10">Phase 3 – Emissions</span>
-                            <span
-                                class="absolute inset-0 bg-emerald-100 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                        <a href="/esg-report/<?php echo $slug; ?>" data-page="<?php echo $slug; ?>" 
+                           class="nav-link relative px-4 py-2.5 rounded-lg text-gray-700 hover:text-emerald-700 hover:bg-emerald-50 transition-all group">
+                            <span class="relative z-10"><?php echo $label; ?></span>
+                            <span class="indicator"></span>
                         </a>
                     </li>
-
-                    <li>
-                        <a href="/phase-4" data-page="phase-4" class="nav-link relative px-4 py-2.5 rounded-lg text-gray-700 hover:text-emerald-700 transition-all duration-300 
-                                hover:bg-emerald-50 group">
-                            <span class="relative z-10">Phase 4 – Environmental</span>
-                            <span
-                                class="absolute inset-0 bg-emerald-100 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="/phase-5" data-page="phase-5" class="nav-link relative px-4 py-2.5 rounded-lg text-gray-700 hover:text-emerald-700 transition-all duration-300 
-                                hover:bg-emerald-50 group">
-                            <span class="relative z-10">Phase 5 – Social & Governance</span>
-                            <span
-                                class="absolute inset-0 bg-emerald-100 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="/phase-6" data-page="phase-6" class="nav-link relative px-4 py-2.5 rounded-lg text-gray-700 hover:text-emerald-700 transition-all duration-300 
-                                hover:bg-emerald-50 group">
-                            <span class="relative z-10">Phase 6 – EU Taxonomy & Assurance</span>
-                            <span
-                                class="absolute inset-0 bg-emerald-100 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-                        </a>
-                    </li>
+                    <?php endforeach; ?>
                 </ul>
 
-                <!-- Optional: Action Button -->
-                <div class="hidden md:block">
-                    <button class="ml-4 px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-500 text-white font-medium rounded-lg 
-                                hover:shadow-lg hover:shadow-emerald-100 hover:-translate-y-0.5 transition-all duration-300 
-                                focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
-                        Get Started
-                    </button>
-                </div>
-
-                <!-- Mobile menu button -->
-                <button class="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
+                <button class="hidden md:block px-5 py-2.5 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition-all">
+                    Generate Report
                 </button>
             </div>
         </div>
-
-        <!-- Mobile Navigation -->
-        <div class="md:hidden bg-white border-t border-gray-100">
-            <ul class="py-2 px-4">
-                <li class="border-b border-gray-100">
-                    <a href="/phase-3" data-page="phase-3"
-                        class="block py-3.5 text-gray-700 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg px-3 transition-colors">
-                        Phase 3 – Emissions
-                    </a>
-                </li>
-                <li class="border-b border-gray-100">
-                    <a href="/phase-4" data-page="phase-4"
-                        class="block py-3.5 text-gray-700 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg px-3 transition-colors">
-                        Phase 4 – Environmental
-                    </a>
-                </li>
-                <li class="border-b border-gray-100">
-                    <a href="/phase-5" data-page="phase-5"
-                        class="block py-3.5 text-gray-700 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg px-3 transition-colors">
-                        Phase 5 – Social & Governance
-                    </a>
-                </li>
-                <li>
-                    <a href="/phase-6" data-page="phase-6"
-                        class="block py-3.5 text-gray-700 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg px-3 transition-colors">
-                        Phase 6 – EU Taxonomy & Assurance
-                    </a>
-                </li>
-            </ul>
-        </div>
     </nav>
 
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div id="app" class="min-h-[400px] bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div class="flex flex-col items-center justify-center py-20 text-gray-400">
+                <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-600 mb-4"></div>
+                <p>Loading ESG Module...</p>
+            </div>
+        </div>
+    </main>
 
+    <footer class="bg-gray-800 text-gray-400 py-6 text-center text-sm">
+        <p>© 2026 ESG Reporting Platform • Built with PHP & JS SPA</p>
+    </footer>
 
-<hr />
+    <script>
+        const app = document.getElementById("app");
+        const links = document.querySelectorAll(".nav-link");
+        const basePath = "/esg-report/";
 
-
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-
-
-
-      <main id="app">Loading…</main>
-
-    
-  </main>
-
-    <footer class="bg-gray-800 text-gray-300 py-6 text-center text-sm">
-    <p>© 2026 ESG Reporting Platform • All rights reserved</p>
-  </footer>
-
-
-<script>
-
-
-document.addEventListener('DOMContentLoaded', function() {
-    const navLinks = document.querySelectorAll('.nav-link');
-    const currentPage = window.location.pathname;
-    
-    navLinks.forEach(link => {
-        if (link.getAttribute('href') === currentPage) {
-            link.classList.add('text-emerald-700', 'bg-emerald-50');
-            link.classList.remove('text-gray-700', 'hover:text-emerald-700');
+        /**
+         * Core Loader Function
+         */
+        async function load(page, push = true) {
+            // Remove .php extension if provided by mistake
+            const cleanPage = page.replace('.php', '');
             
-            // Add active indicator
-            const activeIndicator = document.createElement('span');
-            activeIndicator.className = 'absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1.5 h-1.5 bg-emerald-500 rounded-full';
-            link.querySelector('.relative').appendChild(activeIndicator);
+            try {
+                // Fetch from the /pages/ subfolder
+                const response = await fetch(`pages/${cleanPage}.php`);
+                
+                if (!response.ok) throw new Error("Module not found");
+                
+                const html = await response.text();
+                app.innerHTML = html;
+                
+                setActive(cleanPage);
+                
+                if (push) {
+                    history.pushState({ page: cleanPage }, "", basePath + cleanPage);
+                }
+                
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+            } catch (error) {
+                app.innerHTML = `
+                    <div class="text-center py-20">
+                        <h2 class="text-2xl font-bold text-gray-800">Module Not Found</h2>
+                        <p class="text-gray-500 mt-2">Could not load: <b>pages/${cleanPage}.php</b></p>
+                        <button onclick="load('phase-3')" class="mt-6 px-4 py-2 bg-emerald-100 text-emerald-700 rounded-lg">Return to Phase 3</button>
+                    </div>`;
+            }
         }
-    });
-});
 
+        /**
+         * Update UI state
+         */
+        function setActive(page) {
+            links.forEach(a => {
+                const isMatch = a.dataset.page === page;
+                a.classList.toggle("active", isMatch);
+            });
+        }
 
-  const app = document.getElementById("app");
-  const links = document.querySelectorAll(".nav-link");
+        /**
+         * Event Listeners
+         */
+        links.forEach(a => {
+            a.addEventListener("click", e => {
+                e.preventDefault();
+                load(a.dataset.page);
+            });
+        });
 
-  function load(page, push = true) {
-    fetch(`pages/${page}.html`)
-      .then(res => res.text())
-      .then(html => {
-        app.innerHTML = html;
-        setActive(page);
-        if (push) history.pushState({ page }, "", "/" + page);
-      })
-      .catch(() => app.innerHTML = "<h2>Page not found</h2>");
-  }
+        window.addEventListener("popstate", e => {
+            const page = e.state?.page || "phase-3";
+            load(page, false);
+        });
 
-  function setActive(page) {
-    links.forEach(a =>
-      a.classList.toggle("active", a.dataset.page === page)
-    );
-  }
-
-  links.forEach(a => {
-    a.addEventListener("click", e => {
-      e.preventDefault();           // 🔥 THIS IS CRITICAL
-      load(a.dataset.page);
-    });
-  });
-
-  window.addEventListener("popstate", e => {
-    if (e.state?.page) load(e.state.page, false);
-  });
-
-  const page = location.pathname.replace("/", "") || "phase-3";
-  load(page, false);
-</script>
-
-
+        // Determine initial page on load
+        const urlPath = location.pathname.replace(basePath, "").replace("/", "");
+        const initialPage = urlPath || "phase-3";
+        
+        load(initialPage, false);
+    </script>
 </body>
 </html>

@@ -1,41 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phase 5: Social & Governance Reporting (S1–S4, G1)</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .accordion-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-        }
-        
-        input[type="checkbox"]:checked ~ .accordion-content {
-            max-height: 2000px;
-            transition: max-height 0.5s ease-in;
-        }
-        
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-        
-        .animate-shimmer {
-            animation: shimmer 2s infinite;
-        }
-    </style>
-</head>
-<body class="bg-gray-50">
 
-<div class="max-w-7xl mx-auto px-4 py-8">
     
     <!-- Page Header -->
     <section id="phase-5" class="mb-16 scroll-mt-20">
-        <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-8 border-b border-emerald-200 pb-4">
+        <!-- <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-8 border-b border-emerald-200 pb-4">
             Phase 5: Social & Governance Reporting (S1–S4, G1)
-        </h2>
+        </h2> -->
+
+         <div class="inline-flex items-center gap-4 mb-4">
+      <div class="relative">
+        <div
+          class="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center shadow-lg">
+          <span class="text-white font-bold text-lg">5</span>
+        </div>
+      <div class="absolute -inset-2 bg-gradient-to-r from-teal-500/20 to-emerald-600/20 blur-xl rounded-full">
+        </div>
+      </div>
+      <div>
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Social & Governance Reporting (S1–S4, G1)</h2>
+        <p class="text-gray-600 mt-2">Manage social impact disclosures and corporate conduct across your workforce, value chain, and governance structures.</p>
+      </div>
+    </div>
+
 
         <!-- ========================================================================
              REPORTING PERIOD & STATUS SECTION (CRITICAL - MISSING FROM ORIGINAL)
@@ -52,12 +37,9 @@
                 <!-- Reporting Period -->
                 <div class="space-y-3">
                     <label class="block text-sm font-semibold text-gray-800 flex items-center gap-2">
-                        <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        Reporting Period *
-                        <span class="text-red-500">*</span>
-                    </label>
+    ...
+    Reporting Period <span class="text-red-500">*</span>
+</label>
                     <input 
                         type="date" 
                         id="reportingPeriod"
@@ -82,8 +64,9 @@
                         class="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all appearance-none cursor-pointer"
                     >
                         <option value="DRAFT">Draft</option>
-                        <option value="SUBMITTED">Submitted</option>
+                        <option value="UNDER_REVIEW">Under Review</option>
                         <option value="APPROVED">Approved</option>
+                        <option value="PUBLISHED">Published</option>
                         <option value="REJECTED">Rejected</option>
                     </select>
                     <p class="text-xs text-gray-500">Status field from database schema</p>
@@ -207,87 +190,101 @@
 
                 <!-- S1 - Own Workforce -->
                 <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden transition-all duration-300 hover:border-indigo-300 hover:shadow-lg">
-                    <input type="checkbox" id="s1-accordion" class="hidden peer" checked>
-                    <label for="s1-accordion" class="flex items-center justify-between px-6 py-5 cursor-pointer bg-gradient-to-r from-indigo-50 to-white peer-checked:from-indigo-100 transition-all duration-300">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shadow-md">
-                                <span class="text-white font-bold text-lg">S1</span>
-                            </div>
-                            <div>
-                                <h4 class="text-lg font-bold text-gray-900">Own Workforce</h4>
-                                <p class="text-sm text-gray-600 mt-1">Employee welfare, training, and health & safety</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <span class="px-3 py-1 bg-gradient-to-r from-indigo-100 to-indigo-50 text-indigo-800 text-xs font-semibold rounded-full border border-indigo-200">
-                                85% Complete
-                            </span>
-                            <svg class="w-5 h-5 text-gray-400 transition-transform duration-300 peer-checked:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </div>
+    <input type="checkbox" id="s1-accordion" class="hidden peer" checked>
+    <label for="s1-accordion" class="flex items-center justify-between px-6 py-5 cursor-pointer bg-gradient-to-r from-indigo-50 to-white peer-checked:from-indigo-100 transition-all duration-300">
+        <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shadow-md">
+                <span class="text-white font-bold text-lg">S1</span>
+            </div>
+            <div>
+                <h4 class="text-lg font-bold text-gray-900">Own Workforce</h4>
+                <p class="text-sm text-gray-600 mt-1">Employee welfare, training, and health & safety</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <span class="px-3 py-1 bg-gradient-to-r from-indigo-100 to-indigo-50 text-indigo-800 text-xs font-semibold rounded-full border border-indigo-200">
+                85% Complete
+            </span>
+            <svg class="w-5 h-5 text-gray-400 transition-transform duration-300 peer-checked:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+        </div>
+    </label>
+
+    <div class="max-h-0 overflow-hidden transition-all duration-300 peer-checked:max-h-[1000px]">
+        <div class="px-6 pb-6 pt-4">
+<div class="space-y-6">
+
+            <!-- Materiality Check -->
+            <div class="flex items-center gap-3 p-4 bg-gradient-to-r from-indigo-50 to-indigo-100/50 rounded-xl border border-indigo-200">
+                <input type="checkbox" id="s1_material" name="s1_material" class="w-5 h-5 text-indigo-600 rounded-lg border-gray-300 focus:ring-2 focus:ring-indigo-500/50">
+                <label for="s1_material" class="text-sm font-semibold text-indigo-900">
+                    Is Own Workforce a material topic for this organization?
+                </label>
+            </div>
+   </div>
+
+
+            <!-- Form Fields -->
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Training Hours -->
+                <div class="space-y-3">
+                    <label class="block text-sm font-semibold text-gray-800 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                        Training Hours (Per Employee)
                     </label>
-
-                    <div class="accordion-content px-6 pb-6 max-h-0 overflow-hidden transition-all duration-300 peer-checked:max-h-[1000px]">
-                        <div class="space-y-6 pt-4">
-                            <!-- Materiality Check -->
-                            <div class="flex items-center gap-3 p-4 bg-gradient-to-r from-indigo-50 to-indigo-100/50 rounded-xl border border-indigo-200">
-                                <input type="checkbox" id="s1_material" name="s1_material" class="w-5 h-5 text-indigo-600 rounded-lg border-gray-300 focus:ring-2 focus:ring-indigo-500/50">
-                                <label for="s1_material" class="text-sm font-semibold text-indigo-900">
-                                    Is Own Workforce a material topic for this organization?
-                                </label>
-                            </div>
-
-                            <!-- Form Fields -->
-                            <div class="grid md:grid-cols-2 gap-6">
-                                <div class="space-y-3">
-                                    <label class="block text-sm font-semibold text-gray-800 flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                        </svg>
-                                        Training Hours (Per Employee)
-                                    </label>
-                                    <div class="relative">
-                                        <input 
-                                            type="number" 
-                                            name="s1_training_hours_per_employee" 
-                                            placeholder="e.g. 24"
-                                            class="w-full px-4 py-3.5 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 outline-none transition-all shadow-sm pr-24"
-                                        />
-                                        <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
-                                            <span class="text-gray-500">hours/year</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="space-y-3">
-                                    <label class="block text-sm font-semibold text-gray-800">Health & Safety Policy</label>
-                                    <textarea 
-                                        name="s1_health_and_safety" 
-                                        rows="3"
-                                        class="w-full px-4 py-3.5 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 outline-none transition-all shadow-sm resize-none"
-                                        placeholder="Describe Occupational Health & Safety management systems..."
-                                    ></textarea>
-                                </div>
-                            </div>
-
-                            <div class="space-y-3">
-                                <label class="block text-sm font-semibold text-gray-800 flex items-center gap-2">
-                                    <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                                    </svg>
-                                    Employee Count by Contract Type
-                                </label>
-                                <textarea 
-                                    name="s1_employee_count_by_contract" 
-                                    rows="2"
-                                    class="w-full px-4 py-3.5 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 outline-none transition-all shadow-sm resize-none"
-                                    placeholder="Permanent vs Temporary breakdown..."
-                                ></textarea>
-                            </div>
+                    <div class="relative">
+                        <input 
+                            type="number" 
+                            name="s1_training_hours_per_employee"
+                            min="0" 
+                            max="10000" 
+                            step="0.1"
+                            placeholder="e.g. 24"
+                            class="w-full px-4 py-3.5 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 outline-none transition-all shadow-sm pr-24"
+                        />
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                            <span class="text-gray-500">hours/year</span>
                         </div>
                     </div>
                 </div>
+
+                <!-- Health & Safety Policy -->
+                <div class="space-y-3">
+                    <label class="block text-sm font-semibold text-gray-800">
+                        Health & Safety Policy
+                        <span class="text-red-500 ml-1" title="Required">*</span>
+                    </label>
+                    <textarea 
+                        name="s1_health_and_safety" 
+                        rows="3"
+                        required
+                        class="w-full px-4 py-3.5 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 outline-none transition-all shadow-sm resize-none"
+                        placeholder="Describe Occupational Health & Safety management systems..."
+                    ></textarea>
+                </div>
+            </div>
+
+            <!-- Employee Count by Contract Type -->
+            <div class="space-y-3">
+                <label class="block text-sm font-semibold text-gray-800 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    Employee Count by Contract Type
+                </label>
+                <textarea 
+                    name="s1_employee_count_by_contract" 
+                    rows="2"
+                    class="w-full px-4 py-3.5 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 outline-none transition-all shadow-sm resize-none"
+                    placeholder="Permanent vs Temporary breakdown..."
+                ></textarea>
+            </div>
+        </div>
+    </div>
+</div>
 
                 <!-- S2 - Workers in Value Chain -->
                 <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden transition-all duration-300 hover:border-purple-300 hover:shadow-lg">
@@ -312,8 +309,11 @@
                         </div>
                     </label>
 
-                    <div class="accordion-content px-6 pb-6 max-h-0 overflow-hidden transition-all duration-300 peer-checked:max-h-[1000px]">
-                        <div class="space-y-6 pt-4">
+                    <div class="max-h-0 overflow-hidden transition-all duration-300 peer-checked:max-h-[1000px]">
+                        <div class="px-6 pb-6 pt-4">
+
+                         <div class="space-y-6">
+
                             <!-- Materiality Check -->
                             <div class="flex items-center gap-3 p-4 bg-gradient-to-r from-purple-50 to-purple-100/50 rounded-xl border border-purple-200">
                                 <input type="checkbox" id="s2_material" name="s2_material" class="w-5 h-5 text-purple-600 rounded-lg border-gray-300 focus:ring-2 focus:ring-purple-500/50">
@@ -322,6 +322,7 @@
                                 </label>
                             </div>
 
+                              </div>
                             <!-- Form Fields -->
                             <div class="grid md:grid-cols-2 gap-6">
                                 <div class="space-y-3">
@@ -330,6 +331,7 @@
                                         <input 
                                             type="number" 
                                             name="s2_pct_suppliers_audited"
+                                            placeholder="e.g. 85"
                                             min="0"
                                             max="100"
                                             class="w-full px-4 py-3.5 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-all shadow-sm pr-12"
@@ -387,14 +389,18 @@
                         </div>
                     </label>
 
-                    <div class="accordion-content px-6 pb-6 max-h-0 overflow-hidden transition-all duration-300 peer-checked:max-h-[1000px]">
-                        <div class="space-y-6 pt-4">
-                            <!-- Materiality Check -->
-                            <div class="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-50 to-blue-100/50 rounded-xl border border-blue-200">
-                                <input type="checkbox" id="s3_material" name="s3_material" class="w-5 h-5 text-blue-600 rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500/50">
-                                <label for="s3_material" class="text-sm font-semibold text-blue-900">
-                                    Is this topic material for the organization?
-                                </label>
+                    <div class="max-h-0 overflow-hidden transition-all duration-300 peer-checked:max-h-[1000px]">
+                        <div class="px-6 pb-6 pt-4">
+
+                            <div class="space-y-6">
+
+                                <!-- Materiality Check -->
+                                <div class="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-50 to-blue-100/50 rounded-xl border border-blue-200">
+                                    <input type="checkbox" id="s3_material" name="s3_material" class="w-5 h-5 text-blue-600 rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500/50">
+                                    <label for="s3_material" class="text-sm font-semibold text-blue-900">
+                                        Is this topic material for the organization?
+                                    </label>
+                                </div>
                             </div>
 
                             <!-- Form Fields -->
@@ -456,14 +462,20 @@
                         </div>
                     </label>
 
-                    <div class="accordion-content px-6 pb-6 max-h-0 overflow-hidden transition-all duration-300 peer-checked:max-h-[1000px]">
-                        <div class="space-y-6 pt-4">
-                            <!-- Materiality Check -->
-                            <div class="flex items-center gap-3 p-4 bg-gradient-to-r from-violet-50 to-violet-100/50 rounded-xl border border-violet-200">
-                                <input type="checkbox" id="s4_material" name="s4_material" class="w-5 h-5 text-violet-600 rounded-lg border-gray-300 focus:ring-2 focus:ring-violet-500/50">
-                                <label for="s4_material" class="text-sm font-semibold text-violet-900">
-                                    Is this topic material for the organization?
-                                </label>
+                    <div class="max-h-0 overflow-hidden transition-all duration-300 peer-checked:max-h-[1000px]">
+
+                        <div class="px-6 pb-6 pt-4">
+
+                            <div class="space-y-6">
+
+                                <!-- Materiality Check -->
+                                <div class="flex items-center gap-3 p-4 bg-gradient-to-r from-violet-50 to-violet-100/50 rounded-xl border border-violet-200">
+                                    <input type="checkbox" id="s4_material" name="s4_material" class="w-5 h-5 text-violet-600 rounded-lg border-gray-300 focus:ring-2 focus:ring-violet-500/50">
+                                    <label for="s4_material" class="text-sm font-semibold text-violet-900">
+                                        Is this topic material for the organization?
+                                    </label>
+                                </div>
+
                             </div>
 
                             <!-- Form Fields -->
@@ -974,7 +986,5 @@
 
     </section>
 
-</div>
 
-</body>
-</html>
+

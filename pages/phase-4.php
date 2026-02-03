@@ -1,6 +1,63 @@
+<?php
+session_start();
+require_once 'includes/auth.php';
+requireLogin();
+
+$companyId = getCurrentCompanyId();
+$reportingPeriod = $_GET['period'] ?? date('Y-m-01');
+
+// Get aggregated emissions for this period
+$stmt = $pdo->prepare("
+    SELECT 
+        scope,
+        SUM(tco2e_calculated) as total
+    FROM emission_records
+    WHERE company_id = ? 
+      AND DATE_FORMAT(date_calculated, '%Y-%m') = ?
+    GROUP BY scope
+");
+$stmt->execute([$companyId, $reportingPeriod]);
+$emissions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$scope1 = 0;
+$scope2 = 0;
+foreach($emissions as $em) {
+    if($em['scope'] == 'Scope 1') $scope1 = $em['total'];
+    if(str_contains($em['scope'], 'Scope 2')) $scope2 += $em['total'];
+}
+$totalGHG = $scope1 + $scope2;
+?>
+
 <section id="phase-4" class="mb-20 scroll-mt-20">
   
   <!-- ✅ NEW: Global Company & Reporting Period Selection -->
+  
+
+  <!-- Phase Header -->
+  <div class="mb-12">
+    <div class="inline-flex items-center gap-4 mb-4">
+      <div class="relative">
+        <div
+          class="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center shadow-lg">
+          <span class="text-white font-bold text-lg">4</span>
+        </div>
+      <div class="absolute -inset-2 bg-gradient-to-r from-teal-500/20 to-emerald-600/20 blur-xl rounded-full">
+        </div>
+      </div>
+      <div>
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Environmental Reporting</h2>
+        <p class="text-gray-600 mt-2">ESRS E1–E5 Compliance & Disclosure Management</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3 mt-6 text-sm">
+      <span
+        class="px-3 py-1.5 bg-gradient-to-r from-teal-100 to-emerald-100 text-teal-800 rounded-full font-medium">ESRS
+        Standards</span>
+      <span class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full font-medium">Phase 4</span>
+    </div>
+  </div>
+
+
   <div class="bg-gradient-to-br from-indigo-50 to-purple-50 shadow-lg rounded-2xl p-6 mb-8 border border-indigo-200">
     <div class="flex items-center gap-3 mb-4">
       <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -36,30 +93,6 @@
         <input type="month" id="phase4GlobalReportingPeriod" name="reportingPeriod" required placeholder="YYYY-MM"
           class="w-full px-4 py-3.5 bg-white border-2 border-indigo-200 rounded-xl focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 outline-none transition-all shadow-sm">
       </div>
-    </div>
-  </div>
-
-  <!-- Phase Header -->
-  <div class="mb-12">
-    <div class="inline-flex items-center gap-4 mb-4">
-      <div class="relative">
-        <div
-          class="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center shadow-lg">
-          <span class="text-white font-bold text-lg">4</span>
-        </div>
-        <div class="absolute -inset-2 bg-gradient-to-r from-teal-500/20 to-emerald-600/20 blur-xl rounded-full">
-        </div>
-      </div>
-      <div>
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Environmental Reporting</h2>
-        <p class="text-gray-600 mt-2">ESRS E1–E5 Compliance & Disclosure Management</p>
-      </div>
-    </div>
-    <div class="flex items-center gap-3 mt-6 text-sm">
-      <span
-        class="px-3 py-1.5 bg-gradient-to-r from-teal-100 to-emerald-100 text-teal-800 rounded-full font-medium">ESRS
-        Standards</span>
-      <span class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full font-medium">Phase 4</span>
     </div>
   </div>
 

@@ -1,3 +1,20 @@
+<?php
+session_start();
+require_once 'includes/auth.php';
+requireLogin();
+
+$companyId = getCurrentCompanyId();
+
+// Get sites for dropdown
+$stmt = $pdo->prepare("SELECT id, name FROM sites WHERE company_id = ?");
+$stmt->execute([$companyId]);
+$sites = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Get emission factors
+$stmt = $pdo->query("SELECT * FROM emission_factors WHERE is_active = 1");
+$factors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+?>
+
 <!-- ================================================ -->
 <!-- PHASE 3 – FIXED VERSION WITH DATABASE ALIGNMENT -->
 <!-- ================================================ -->
@@ -5,13 +22,24 @@
 <section id="phase-3" class="mb-20 scroll-mt-20">
   <!-- Phase Header -->
   <div class="mb-10">
-    <div class="inline-flex items-center gap-3 mb-3">
-      <div class="w-8 h-8 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 flex items-center justify-center">
-        <span class="text-white font-bold text-sm">3</span>
+
+
+    <div class="inline-flex items-center gap-4 mb-4">
+      <div class="relative">
+        <div
+          class="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center shadow-lg">
+          <span class="text-white font-bold text-lg">3</span>
+        </div>
+      <div class="absolute -inset-2 bg-gradient-to-r from-teal-500/20 to-emerald-600/20 blur-xl rounded-full">
+        </div>
       </div>
-      <h2 class="text-2xl md:text-3xl font-bold text-gray-900">Emissions Data Collection</h2>
+      <div>
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Emissions Data Collection</h2>
+        <p class="text-gray-600 mt-2">Input your emission factors and activity data to calculate your carbon footprint</p>
+      </div>
     </div>
-    <p class="text-gray-600 ml-11">Input your emission factors and activity data to calculate your carbon footprint</p>
+
+
   </div>
 
   <!-- ✅ NEW: Global Company Selection -->
