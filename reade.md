@@ -10,7 +10,7 @@
 
 
 ## **📂 FINAL FILE STRUCTURE**
-```
+   
 /esg-reporting/
 ├── config/
 │   └── database.php
@@ -42,3 +42,4 @@
 │   └── save_taxonomy.php
 │
 └── index.php (redirects to login or dashboard)
+

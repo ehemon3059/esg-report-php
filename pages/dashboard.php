@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'includes/auth.php';
+require_once 'config/database.php';
 requireLogin(); // Must be logged in
 
 // Get current user's company
