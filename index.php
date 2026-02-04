@@ -1,3 +1,18 @@
+<?php
+session_start();
+
+// Check if user is logged in
+if (isset($_SESSION['user_id'])) {
+    // User is authenticated, redirect to dashboard
+    header('Location: pages/dashboard.php');
+    exit;
+} else {
+    // User is not authenticated, redirect to login
+    header('Location: pages/login.php');
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'config/database.php';
+require_once '../config/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
@@ -15,17 +15,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Verify password
     if ($user && password_verify($password, $user['password'])) {
         // Regenerate session ID to prevent session fixation
-        session_regenerate_id();
+        session_regenerate_id(true);
         
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['user_name'] = $user['name'];
         $_SESSION['user_role'] = $user['role'];
         $_SESSION['company_id'] = $user['company_id'];
         
-        header('Location: dashboard.php');
+        // Redirect to dashboard (correct path)
+        header('Location: ../pages/dashboard.php');
         exit;
     } else {
-        header('Location: login.php?error=invalid_credentials');
+        header('Location: ../pages/login.php?error=invalid_credentials');
         exit;
     }
 }

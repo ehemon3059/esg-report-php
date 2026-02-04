@@ -1,12 +1,154 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Phase 6: EU Taxonomy & Assurance</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-50">
+<?php
+/**
+ * ============================================================================
+ * PHASE 6 - UNIFIED SAVE HANDLER (EU TAXONOMY & ASSURANCE)
+ * ============================================================================
+ */
+
+session_start();
+require_once '../config/database.php';
+require_once '../includes/auth.php';
+requireLogin();
+
+header('Content-Type: application/json');
+
+$companyId = getCurrentCompanyId();
+$userId = getCurrentUserId();
+
+if (!$companyId || !$userId) {
+    echo json_encode(['success' => false, 'message' => 'Authentication error. Please login again.']);
+    exit;
+}
+
+// 1. Determine which part of Phase 6 we are saving
+$type = $_POST['type'] ?? ''; // Expecting 'taxonomy' or 'assurance'
+$reportingPeriod = trim($_POST['reportingPeriod'] ?? '');
+$status = trim($_POST['status'] ?? '');
+
+// Global Validation
+if (!in_array($type, ['taxonomy', 'assurance'])) {
+    echo json_encode(['success' => false, 'message' => 'Invalid save type specified.']);
+    exit;
+}
+
+if (empty($reportingPeriod) || empty($status)) {
+    echo json_encode(['success' => false, 'message' => 'Missing reporting period or status.']);
+    exit;
+}
+
+$validStatuses = ['DRAFT', 'SUBMITTED', 'APPROVED', 'REJECTED'];
+if (!in_array($status, $validStatuses)) {
+    echo json_encode(['success' => false, 'message' => 'Invalid status value.']);
+    exit;
+}
+
+try {
+    if ($type === 'taxonomy') {
+        // --- EU TAXONOMY LOGIC ---
+        $economicActivities = trim($_POST['economicActivities'] ?? '');
+        $technicalScreeningCriteria = trim($_POST['technicalScreeningCriteria'] ?? '');
+        $taxonomyEligibleRevenuePct = !empty($_POST['taxonomyEligibleRevenuePct']) ? intval($_POST['taxonomyEligibleRevenuePct']) : null;
+        $taxonomyAlignedRevenuePct = !empty($_POST['taxonomyAlignedRevenuePct']) ? intval($_POST['taxonomyAlignedRevenuePct']) : null;
+        $taxonomyEligibleCapexPct = !empty($_POST['taxonomyEligibleCapexPct']) ? intval($_POST['taxonomyEligibleCapexPct']) : null;
+        $taxonomyAlignedCapexPct = !empty($_POST['taxonomyAlignedCapexPct']) ? intval($_POST['taxonomyAlignedCapexPct']) : null;
+        $taxonomyAlignedOpexPct = !empty($_POST['taxonomyAlignedOpexPct']) ? intval($_POST['taxonomyAlignedOpexPct']) : null;
+        $dnsh_status = !empty($_POST['dnsh_status']) ? trim($_POST['dnsh_status']) : null;
+        $social_safeguards_status = !empty($_POST['social_safeguards_status']) ? trim($_POST['social_safeguards_status']) : null;
+
+        // Validation for Taxonomy
+        if ($taxonomyAlignedRevenuePct > $taxonomyEligibleRevenuePct) {
+            throw new Exception('Aligned revenue cannot exceed eligible revenue');
+        }
+
+        $stmt = $pdo->prepare("SELECT id FROM eu_taxonomy WHERE company_id = ? AND reporting_period = ?");
+        $stmt->execute([$companyId, $reportingPeriod]);
+        $existing = $stmt->fetch();
+
+        if ($existing) {
+            $sql = "UPDATE eu_taxonomy SET status=?, updated_by=?, economic_activities=?, technical_screening_criteria=?, 
+                    taxonomy_eligible_revenue_pct=?, taxonomy_aligned_revenue_pct=?, taxonomy_eligible_capex_pct=?, 
+                    taxonomy_aligned_capex_pct=?, taxonomy_aligned_opex_pct=?, dnsh_status=?, social_safeguards_status=?, updated_at=NOW() 
+                    WHERE id=?";
+            $params = [$status, $userId, $economicActivities, $technicalScreeningCriteria, $taxonomyEligibleRevenuePct, 
+                       $taxonomyAlignedRevenuePct, $taxonomyEligibleCapexPct, $taxonomyAlignedCapexPct, $taxonomyAlignedOpexPct, 
+                       $dnsh_status, $social_safeguards_status, $existing['id']];
+            $recordId = $existing['id'];
+            $action = 'updated';
+        } else {
+            $recordId = bin2hex(random_bytes(16));
+            $sql = "INSERT INTO eu_taxonomy (id, company_id, reporting_period, status, created_by, economic_activities, 
+                    technical_screening_criteria, taxonomy_eligible_revenue_pct, taxonomy_aligned_revenue_pct, 
+                    taxonomy_eligible_capex_pct, taxonomy_aligned_capex_pct, taxonomy_aligned_opex_pct, dnsh_status, 
+                    social_safeguards_status, created_at, updated_at) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+            $params = [$recordId, $companyId, $reportingPeriod, $status, $userId, $economicActivities, $technicalScreeningCriteria, 
+                       $taxonomyEligibleRevenuePct, $taxonomyAlignedRevenuePct, $taxonomyEligibleCapexPct, $taxonomyAlignedCapexPct, 
+                       $taxonomyAlignedOpexPct, $dnsh_status, $social_safeguards_status];
+            $action = 'created';
+        }
+    } else {
+        // --- ASSURANCE LOGIC ---
+        $assuranceProvider = trim($_POST['assuranceProvider'] ?? '');
+        $scopeOfAssurance = !empty($_POST['scopeOfAssurance']) ? trim($_POST['scopeOfAssurance']) : null;
+        $reportingStandards = trim($_POST['reportingStandards'] ?? '');
+        $assuranceConclusionSummary = trim($_POST['assuranceConclusionSummary'] ?? '');
+        $materialMisstatementsIdentified = trim($_POST['materialMisstatementsIdentified'] ?? '');
+        $managementResponse = trim($_POST['managementResponse'] ?? '');
+        
+        $checklist = [
+            isset($_POST['checklist_data_collection_documented']) ? 1 : 0,
+            isset($_POST['checklist_internal_controls_tested']) ? 1 : 0,
+            isset($_POST['checklist_source_documentation_trail']) ? 1 : 0,
+            isset($_POST['checklist_calculation_method_validated']) ? 1 : 0
+        ];
+
+        $stmt = $pdo->prepare("SELECT id FROM assurance WHERE company_id = ? AND reporting_period = ?");
+        $stmt->execute([$companyId, $reportingPeriod]);
+        $existing = $stmt->fetch();
+
+        if ($existing) {
+            $sql = "UPDATE assurance SET status=?, updated_by=?, assurance_provider=?, scope_of_assurance=?, reporting_standards=?, 
+                    assurance_conclusion_summary=?, material_misstatements_identified=?, management_response=?, 
+                    checklist_data_collection_documented=?, checklist_internal_controls_tested=?, checklist_source_documentation_trail=?, 
+                    checklist_calculation_method_validated=?, assurance_report_url=?, assurance_report_filename=?, updated_at=NOW() 
+                    WHERE id=?";
+            $params = [$status, $userId, $assuranceProvider, $scopeOfAssurance, $reportingStandards, $assuranceConclusionSummary, 
+                       $materialMisstatementsIdentified, $managementResponse, $checklist[0], $checklist[1], $checklist[2], $checklist[3], 
+                       $_POST['assuranceReportUrl'] ?? '', $_POST['assuranceReportFilename'] ?? '', $existing['id']];
+            $recordId = $existing['id'];
+            $action = 'updated';
+        } else {
+            $recordId = bin2hex(random_bytes(16));
+            $sql = "INSERT INTO assurance (id, company_id, reporting_period, status, created_by, assurance_provider, scope_of_assurance, 
+                    reporting_standards, assurance_conclusion_summary, material_misstatements_identified, management_response, 
+                    checklist_data_collection_documented, checklist_internal_controls_tested, checklist_source_documentation_trail, 
+                    checklist_calculation_method_validated, assurance_report_url, assurance_report_filename, created_at, updated_at) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+            $params = [$recordId, $companyId, $reportingPeriod, $status, $userId, $assuranceProvider, $scopeOfAssurance, $reportingStandards, 
+                       $assuranceConclusionSummary, $materialMisstatementsIdentified, $managementResponse, $checklist[0], $checklist[1], 
+                       $checklist[2], $checklist[3], $_POST['assuranceReportUrl'] ?? '', $_POST['assuranceReportFilename'] ?? ''];
+            $action = 'created';
+        }
+    }
+
+    // Execute the determined query
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+
+    echo json_encode([
+        'success' => true,
+        'message' => ucfirst($type) . " report {$action} successfully",
+        'data' => ['recordId' => $recordId, 'type' => $type]
+    ]);
+
+} catch (Exception $e) {
+    error_log("Phase 6 Save Error ($type): " . $e->getMessage());
+    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+}
+?>
+
+
+
   
   <section id="phase-6" class="mb-16 scroll-mt-20 p-8">
     <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-8 border-b border-emerald-200 pb-4">
@@ -721,6 +863,70 @@
 
     </div>
   </section>
+<script>
+// Phase 6 - EU Taxonomy Form Submission
+document.querySelector('#phase-6 form:first-of-type')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    
+    try {
+        const response = await fetch('../actions/save_phase6_taxonomy.php', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showMessage('EU Taxonomy data saved successfully!', 'success');
+        } else {
+            showMessage(result.message, 'error');
+        }
+    } catch (error) {
+        showMessage('Error saving EU Taxonomy data', 'error');
+        console.error(error);
+    }
+});
 
-</body>
-</html>
+// Phase 6 - Assurance Form Submission
+document.querySelector('#phase-6 .bg-gradient-to-br form')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    
+    try {
+        const response = await fetch('../actions/save_phase6_assurance.php', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showMessage('Assurance report saved successfully!', 'success');
+        } else {
+            showMessage(result.message, 'error');
+        }
+    } catch (error) {
+        showMessage('Error saving assurance report', 'error');
+        console.error(error);
+    }
+});
+
+// Message display function
+function showMessage(message, type) {
+    const alertClass = type === 'success' ? 'bg-green-50 border-green-500 text-green-800' : 'bg-red-50 border-red-500 text-red-800';
+    const alertHTML = `
+        <div class="${alertClass} border-l-4 p-4 mb-4 rounded">
+            <p class="font-medium">${message}</p>
+        </div>
+    `;
+    
+    const section = document.querySelector('#phase-6');
+    if (section) {
+        section.insertAdjacentHTML('afterbegin', alertHTML);
+        setTimeout(() => {
+            section.querySelector('div').remove();
+        }, 5000);
+    }
+}
+</script>

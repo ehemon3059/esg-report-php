@@ -15,7 +15,13 @@
         </div>
         <?php endif; ?>
         
-        <form action="process_login.php" method="POST">
+        <?php if(isset($_GET['logout'])): ?>
+        <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded mb-4">
+            You have been logged out successfully
+        </div>
+        <?php endif; ?>
+        
+        <form action="../actions/process_login.php" method="POST">
             <div class="mb-4">
                 <label class="block text-sm font-semibold text-slate-600 mb-2">Email</label>
                 <input type="email" name="email" required 

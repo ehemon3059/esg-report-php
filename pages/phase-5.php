@@ -1,5 +1,141 @@
+<?php
+/**
+ * ============================================================================
+ * PHASE 5 - UNIFIED SAVE HANDLER (SOCIAL & GOVERNANCE)
+ * ============================================================================
+ */
 
-    
+session_start();
+require_once '../config/database.php';
+require_once '../includes/auth.php';
+requireLogin();
+
+header('Content-Type: application/json');
+
+$companyId = getCurrentCompanyId();
+$userId = getCurrentUserId();
+
+if (!$companyId || !$userId) {
+    echo json_encode(['success' => false, 'message' => 'Authentication error. Please login again.']);
+    exit;
+}
+
+// 1. Determine which part of Phase 5 we are saving
+// Use 'save_type' to distinguish between 'social' and 'governance'
+$saveType = $_POST['save_type'] ?? ''; 
+$reportingPeriod = trim($_POST['reportingPeriod'] ?? '');
+
+if (empty($saveType) || empty($reportingPeriod)) {
+    echo json_encode(['success' => false, 'message' => 'Missing required identification fields.']);
+    exit;
+}
+
+try {
+    if ($saveType === 'social') {
+        // --- SOCIAL TOPICS LOGIC ---
+        $status = trim($_POST['socialStatus'] ?? '');
+        $validStatuses = ['DRAFT', 'UNDER_REVIEW', 'APPROVED', 'PUBLISHED', 'REJECTED'];
+        
+        if (!in_array($status, $validStatuses)) {
+            throw new Exception('Invalid social status value');
+        }
+
+        $data = [
+            's1_material' => isset($_POST['s1_material']) ? 1 : 0,
+            's1_employee_count_by_contract' => trim($_POST['s1_employee_count_by_contract'] ?? ''),
+            's1_health_and_safety' => trim($_POST['s1_health_and_safety'] ?? ''),
+            's1_training_hours_per_employee' => !empty($_POST['s1_training_hours_per_employee']) ? intval($_POST['s1_training_hours_per_employee']) : null,
+            's2_material' => isset($_POST['s2_material']) ? 1 : 0,
+            's2_pct_suppliers_audited' => !empty($_POST['s2_pct_suppliers_audited']) ? intval($_POST['s2_pct_suppliers_audited']) : null,
+            's2_remediation_actions' => trim($_POST['s2_remediation_actions'] ?? ''),
+            's3_material' => isset($_POST['s3_material']) ? 1 : 0,
+            's3_community_engagement' => trim($_POST['s3_community_engagement'] ?? ''),
+            's3_complaints_and_outcomes' => trim($_POST['s3_complaints_and_outcomes'] ?? ''),
+            's4_material' => isset($_POST['s4_material']) ? 1 : 0,
+            's4_product_safety_incidents' => !empty($_POST['s4_product_safety_incidents']) ? intval($_POST['s4_product_safety_incidents']) : null,
+            's4_consumer_remediation' => trim($_POST['s4_consumer_remediation'] ?? '')
+        ];
+
+        $stmt = $pdo->prepare("SELECT id FROM social_topics WHERE company_id = ? AND reporting_period = ?");
+        $stmt->execute([$companyId, $reportingPeriod]);
+        $existing = $stmt->fetch();
+
+        if ($existing) {
+            $sql = "UPDATE social_topics SET status=?, updated_by=?, s1_material=?, s1_employee_count_by_contract=?, s1_health_and_safety=?, s1_training_hours_per_employee=?, s2_material=?, s2_pct_suppliers_audited=?, s2_remediation_actions=?, s3_material=?, s3_community_engagement=?, s3_complaints_and_outcomes=?, s4_material=?, s4_product_safety_incidents=?, s4_consumer_remediation=?, updated_at=NOW() WHERE id=?";
+            $params = array_merge([$status, $userId], array_values($data), [$existing['id']]);
+            $action = 'updated';
+            $recordId = $existing['id'];
+        } else {
+            $recordId = bin2hex(random_bytes(16));
+            $sql = "INSERT INTO social_topics (id, company_id, reporting_period, status, created_by, s1_material, s1_employee_count_by_contract, s1_health_and_safety, s1_training_hours_per_employee, s2_material, s2_pct_suppliers_audited, s2_remediation_actions, s3_material, s3_community_engagement, s3_complaints_and_outcomes, s4_material, s4_product_safety_incidents, s4_consumer_remediation, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+            $params = array_merge([$recordId, $companyId, $reportingPeriod, $status, $userId], array_values($data));
+            $action = 'created';
+        }
+
+    } elseif ($saveType === 'governance') {
+        // --- GOVERNANCE LOGIC ---
+        $status = trim($_POST['governanceStatus'] ?? '');
+        $validStatuses = ['DRAFT', 'SUBMITTED', 'APPROVED', 'REJECTED'];
+        
+        if (!in_array($status, $validStatuses)) {
+            throw new Exception('Invalid governance status value');
+        }
+
+        $g1_gender_diversity_pct = !empty($_POST['g1_gender_diversity_pct']) ? intval($_POST['g1_gender_diversity_pct']) : null;
+        if ($g1_gender_diversity_pct !== null && ($g1_gender_diversity_pct < 0 || $g1_gender_diversity_pct > 100)) {
+            throw new Exception('Gender diversity percentage must be between 0 and 100');
+        }
+
+        $data = [
+            'g1_board_composition_independence' => trim($_POST['g1_board_composition_independence'] ?? ''),
+            'g1_gender_diversity_pct' => $g1_gender_diversity_pct,
+            'g1_esg_oversight' => trim($_POST['g1_esg_oversight'] ?? ''),
+            'g1_whistleblower_cases' => trim($_POST['g1_whistleblower_cases'] ?? ''),
+            'g1_anti_corruption_policies' => trim($_POST['g1_anti_corruption_policies'] ?? ''),
+            'g1_related_party_controls' => trim($_POST['g1_related_party_controls'] ?? '')
+        ];
+
+        $stmt = $pdo->prepare("SELECT id FROM s_governance WHERE company_id = ? AND reporting_period = ?");
+        $stmt->execute([$companyId, $reportingPeriod]);
+        $existing = $stmt->fetch();
+
+        if ($existing) {
+            $sql = "UPDATE s_governance SET status=?, updated_by=?, g1_board_composition_independence=?, g1_gender_diversity_pct=?, g1_esg_oversight=?, g1_whistleblower_cases=?, g1_anti_corruption_policies=?, g1_related_party_controls=?, updated_at=NOW() WHERE id=?";
+            $params = array_merge([$status, $userId], array_values($data), [$existing['id']]);
+            $action = 'updated';
+            $recordId = $existing['id'];
+        } else {
+            $recordId = bin2hex(random_bytes(16));
+            $sql = "INSERT INTO s_governance (id, company_id, reporting_period, status, created_by, g1_board_composition_independence, g1_gender_diversity_pct, g1_esg_oversight, g1_whistleblower_cases, g1_anti_corruption_policies, g1_related_party_controls, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+            $params = array_merge([$recordId, $companyId, $reportingPeriod, $status, $userId], array_values($data));
+            $action = 'created';
+        }
+    } else {
+        throw new Exception('Invalid save type specified.');
+    }
+
+    // Execute the determined query
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+
+    echo json_encode([
+        'success' => true,
+        'message' => ucfirst($saveType) . " report {$action} successfully",
+        'data' => [
+            'recordId' => $recordId,
+            'reportingPeriod' => $reportingPeriod,
+            'status' => $status
+        ]
+    ]);
+
+} catch (Exception $e) {
+    error_log("Phase 5 Save Error ($saveType): " . $e->getMessage());
+    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+}
+
+?>
+
+
     <!-- Page Header -->
     <section id="phase-5" class="mb-16 scroll-mt-20">
         <!-- <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-8 border-b border-emerald-200 pb-4">
@@ -988,3 +1124,77 @@
 
 
 
+<script>
+// Phase 5 - Social Topics Form Submission
+document.getElementById('phase5SocialForm')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    
+    // Add reporting period from global selector
+    formData.append('reportingPeriod', document.getElementById('reportingPeriod').value);
+    
+    try {
+        const response = await fetch('../actions/save_phase5_social.php', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showMessage('Social topics saved successfully!', 'success');
+        } else {
+            showMessage(result.message, 'error');
+        }
+    } catch (error) {
+        showMessage('Error saving social topics', 'error');
+        console.error(error);
+    }
+});
+
+// Phase 5 - Governance Form Submission
+document.getElementById('phase5GovernanceForm')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    
+    // Add reporting period from global selector
+    formData.append('reportingPeriod', document.getElementById('reportingPeriod').value);
+    
+    try {
+        const response = await fetch('../actions/save_phase5_governance.php', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showMessage('Governance data saved successfully!', 'success');
+        } else {
+            showMessage(result.message, 'error');
+        }
+    } catch (error) {
+        showMessage('Error saving governance data', 'error');
+        console.error(error);
+    }
+});
+
+// Simple message display function
+function showMessage(message, type) {
+    const alertClass = type === 'success' ? 'bg-green-50 border-green-500 text-green-800' : 'bg-red-50 border-red-500 text-red-800';
+    const alertHTML = `
+        <div class="${alertClass} border-l-4 p-4 mb-4 rounded">
+            <p class="font-medium">${message}</p>
+        </div>
+    `;
+    
+    // Insert at top of page
+    const firstSection = document.querySelector('section');
+    if (firstSection) {
+        firstSection.insertAdjacentHTML('afterbegin', alertHTML);
+        setTimeout(() => {
+            firstSection.querySelector('div').remove();
+        }, 5000);
+    }
+}
+</script>
