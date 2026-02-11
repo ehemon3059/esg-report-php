@@ -1,7 +1,8 @@
 <?php
 function requireLogin() {
     if (!isset($_SESSION['user_id'])) {
-        header('Location: login.php');
+        // Fix: Use correct path from includes/ to pages/
+        header('Location: ../pages/login.php');
         exit;
     }
 }
